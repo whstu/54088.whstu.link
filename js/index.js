@@ -204,7 +204,7 @@ new Vue({
     // 获取自定义抽奖项
     this.onCloseCustom()
     // 加载服务器名单
-    // this.loadFile()
+    this.loadFile()
   },
   methods: {
     // 跳转
@@ -331,7 +331,6 @@ new Vue({
       // GET 拉取 json 名单文件（域名后面就是存放文件夹路径）
       // const url = 'http://127.0.0.1:8089/luckydraw/test.json'
       const url = window.location.origin + '/luckydraw/test.json'
-      console.log(url)
       // 设置请求
       xhr.open('GET', url, true)
       // 发起请求
