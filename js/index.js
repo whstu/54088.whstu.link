@@ -204,7 +204,7 @@ new Vue({
     // 获取自定义抽奖项
     this.onCloseCustom()
     // 加载服务器名单
-    this.loadFile()
+    // this.loadFile()
   },
   methods: {
     // 跳转
