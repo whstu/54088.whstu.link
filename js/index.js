@@ -1,6 +1,6 @@
 // 自定义抽奖弹窗组件
 const CustomLuckyDrawDrawer = {
-  data () {
+  data() {
     return {
       // 显示状态
       visible: false,
@@ -59,14 +59,14 @@ const CustomLuckyDrawDrawer = {
   `,
   methods: {
     // 显示抽屉
-    showDrawer () {
+    showDrawer() {
       // 获取自定义列表
       this.customs = JSON.parse(localStorage.getItem('customs')) || []
       // 显示
       this.visible = true
     },
     // 关闭抽屉
-    onClose () {
+    onClose() {
       // 过滤空名称奖项
       const customs = this.customs.filter(item => {
         return !!item.name
@@ -81,7 +81,7 @@ const CustomLuckyDrawDrawer = {
       this.$emit('close')
     },
     // 新增
-    touchAdd () {
+    touchAdd() {
       const custom = {
         name: undefined,
         tag: undefined
@@ -89,7 +89,7 @@ const CustomLuckyDrawDrawer = {
       this.customs.push(custom)
     },
     // 删除
-    touchDelete (index) {
+    touchDelete(index) {
       this.customs.splice(index, 1)
     }
   }
@@ -174,7 +174,7 @@ new Vue({
       <custom-lucky-draw-drawer ref="custom-lucky-draw-drawer" @close="onCloseCustom"></custom-lucky-draw-drawer>
     </div>
   `,
-  data () {
+  data() {
     return {
       // 0 默认抽奖模式，1 自定义抽奖模式
       modeType: 0,
@@ -190,7 +190,7 @@ new Vue({
       isImportMode: false
     }
   },
-  created () {
+  created() {
     // 获取抽奖模式
     const modeType = localStorage.getItem('modeType')
     if (modeType) {
@@ -203,28 +203,30 @@ new Vue({
     this.isImportUsers = users ? JSON.parse(users).length : false
     // 获取自定义抽奖项
     this.onCloseCustom()
+    // 加载服务器名单
+    // this.loadFile()
   },
   methods: {
     // 跳转
-    touchLuckyDrawPage () {
+    touchLuckyDrawPage() {
       window.location.href = './lucky-draw.html'
     },
     // 抽奖模式切换
-    handleImportModeChange (e) {
+    handleImportModeChange(e) {
       // 存储到 localStorage
       localStorage.setItem('modeType', e)
     },
     // 自定义抽奖组件
-    touchCustom () {
+    touchCustom() {
       this.$refs["custom-lucky-draw-drawer"].showDrawer()
     },
     // 关闭自定义抽奖窗口
-    onCloseCustom () {
+    onCloseCustom() {
       const customs = localStorage.getItem('customs')
       this.isImportMode = customs ? JSON.parse(customs).length : false
     },
     // 清空数据
-    clearData () {
+    clearData() {
       // 清空数据
       localStorage.clear()
       // 清空状态
@@ -235,17 +237,18 @@ new Vue({
       this.$message.success('清理成功')
     },
     // 上传之前检查
-    beforeUpload (file, fileList) {
+    beforeUpload(file, fileList) {
       return true
     },
     // 自定义上传名单
-    customRequest (data) {
-      // 数据记录
+    customRequest(data) {
+      // 清空记录
       this.users = []
       // 进入加载
       this.isLoading = true
       // 开始解析数据
       formJson(data.file, (code, sheets) => {
+        console.log(sheets)
         // 解析成功且有数据
         if (code === 0) {
           // 解析数据
@@ -286,7 +289,7 @@ new Vue({
       })
     },
     // 获取单个用户数据，传入单元格字段
-    userJson (item) {
+    userJson(item) {
       // 分割字符串
       const items = item.split('-')
       // 如果有3个字段
@@ -308,7 +311,7 @@ new Vue({
           department: isNumber ? '' : items[1],
           number: isNumber ? items[1] : 0
         }
-      } 
+      }
       // 如果有1个字段
       if (items.length >= 1) {
         return {
@@ -316,6 +319,55 @@ new Vue({
           name: items[0],
           department: '',
           number: 0
+        }
+      }
+    },
+    // 加载指定文件
+    loadFile() {
+      // 进入加载
+      this.isLoading = true
+      // 创建请求
+      var xhr = new XMLHttpRequest()
+      // GET 拉取 json 名单文件（域名后面就是存放文件夹路径）
+      // const url = 'http://127.0.0.1:8089/luckydraw/test.json'
+      const url = window.location.origin + '/luckydraw/test.json'
+      console.log(url)
+      // 设置请求
+      xhr.open('GET', url, true)
+      // 发起请求
+      xhr.send()
+      // 请求回调 
+      xhr.onreadystatechange = () => {
+        // 判断状态
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          // 清空记录
+          this.users = []
+          // 用户列表
+          const list = JSON.parse(xhr.responseText || '[]')
+          // 转成用户对象
+          list.forEach(item => {
+            const user = this.userJson(item)
+            this.users.push(user)
+          })
+          // 解析成 JSON 字符串
+          const jsonString = JSON.stringify(this.users)
+          // 存储到 localStorage
+          localStorage.setItem('users', jsonString)
+          // 标记为有数据
+          this.isImportUsers = this.users.length
+          // 名单是否为空
+          if (this.users.length) {
+            // 名单有值
+            this.$message.success('上传名单成功')
+          } else {
+            // 名单为空
+            this.$message.error('上传名单是空的，打算抽空气么？')
+          }
+          // 结束加载
+          this.isLoading = false
+        } else {
+          // 结束加载
+          this.isLoading = false
         }
       }
     }
