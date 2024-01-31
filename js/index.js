@@ -139,7 +139,7 @@ new Vue({
       <div class="operation-button import-mode">
         <a-select
           v-model="modeType"
-          @change="handleImportModeChange"
+          @change="onModeTypeChange"
         >
           <a-select-option :value="0">默认抽奖模式</a-select-option>
           <a-select-option :value="1">自定义奖项模式</a-select-option>
@@ -149,6 +149,17 @@ new Vue({
           class="operation-success-icon"
           type="check-circle"
         />
+      </div>
+      <!-- 中奖模式 -->
+      <div class="operation-button import-mode">
+        <a-select
+          v-model="winningType"
+          @change="onWinningTypeChange"
+        >
+          <a-select-option :value="0">不可以重复中奖</a-select-option>
+          <a-select-option :value="1">同轮可以重复中奖</a-select-option>
+          <a-select-option :value="2">同轮不可以重复中奖，不同轮可以重复中奖</a-select-option>
+        </a-select>
       </div>
       <!-- 设置按钮 -->
       <a-button
@@ -178,6 +189,8 @@ new Vue({
     return {
       // 0 默认抽奖模式，1 自定义抽奖模式
       modeType: 0,
+      // 0 不可以重复中奖 1、同轮可以重复中奖 2、同轮不可以重复中奖，不同轮可以重复中奖
+      winningType: 0,
       // 上传文件列表
       fileList: [],
       // 上传状态
@@ -198,6 +211,13 @@ new Vue({
     } else {
       this.modeType = 0
     }
+    // 获取中奖模式
+    const winningType = localStorage.getItem('winningType')
+    if (winningType) {
+      this.winningType = Number(winningType)
+    } else {
+      this.winningType = 0
+    }
     // 获取抽奖用户
     const users = localStorage.getItem('users')
     this.isImportUsers = users ? JSON.parse(users).length : false
@@ -214,9 +234,14 @@ new Vue({
       window.location.href = './lucky-draw.html'
     },
     // 抽奖模式切换
-    handleImportModeChange(e) {
+    onModeTypeChange(e) {
       // 存储到 localStorage
       localStorage.setItem('modeType', e)
+    },
+    // 中奖类型
+    onWinningTypeChange(e) {
+      // 存储到 localStorage
+      localStorage.setItem('winningType', e)
     },
     // 自定义抽奖组件
     touchCustom() {
@@ -235,6 +260,7 @@ new Vue({
       this.isImportUsers = false
       this.isImportMode = false
       this.modeType = 0
+      this.winningType = 0
       // 提示
       this.$message.success('清理成功')
     },
