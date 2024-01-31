@@ -203,8 +203,10 @@ new Vue({
     this.isImportUsers = users ? JSON.parse(users).length : false
     // 获取自定义抽奖项
     this.onCloseCustom()
-    // 加载服务器名单
-    // this.loadFile()
+    // 加载服务器名单（名单有值则不需要重复加载了）
+    // if (!users.length) {
+    //   this.loadFile()
+    // }
   },
   methods: {
     // 跳转
