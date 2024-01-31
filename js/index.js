@@ -329,8 +329,8 @@ new Vue({
       // 创建请求
       var xhr = new XMLHttpRequest()
       // GET 拉取 json 名单文件（域名后面就是存放文件夹路径）
-      // const url = 'http://127.0.0.1:8089/luckydraw/test.json'
-      const url = window.location.origin + '/luckydraw/test.json'
+      // const url = 'http://127.0.0.1:8089/test.json'
+      const url = window.location.origin + '/test.json'
       // 设置请求
       xhr.open('GET', url, true)
       // 发起请求
