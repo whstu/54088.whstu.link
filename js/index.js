@@ -224,7 +224,7 @@ new Vue({
     // 获取自定义抽奖项
     this.onCloseCustom()
     // 加载服务器名单（名单有值则不需要重复加载了）
-    // if (!users.length) {
+    // if (!this.isImportUsers) {
     //   this.loadFile()
     // }
   },
